@@ -1,0 +1,20 @@
+{
+  "name": "aethercrypt",
+  "version": "1.0.0",
+  "description": "Multi-Stage Classical Cryptosystem & Forensic Cryptanalysis Workbench",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "dev": "cd frontend && npm run dev"
+  },
+  "keywords": [
+    "cryptography",
+    "playfair",
+    "vigenere",
+    "columnar-transposition",
+    "fastapi",
+    "threejs",
+    "react"
+  ],
+  "author": "Informatika Unsoed"
+}

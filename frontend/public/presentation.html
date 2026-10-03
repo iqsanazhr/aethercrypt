@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AetherCrypt - Presentasi Super-Enkripsi 3 Lapis</title>
+  
+  <!-- Google Fonts: Space Grotesk & Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ========================================================
+       DESIGN SYSTEM: REPLIKA PERSIS GAYA VISUAL REFERENSI FOTO
+       (WARM CREAM + COBALT BLUE + FOLDER TABS + 3D CRYPTEX SILINDER)
+       ======================================================== */
+    :root {
+      --bg-cream: #F6F4EE;
+      --bg-cream-dark: #ECE8DC;
+      --bg-white: #FFFFFF;
+      --accent-blue: #1863E5;
+      --accent-blue-hover: #124EC0;
+      --accent-blue-subtle: #E8F0FE;
+      --dark-badge: #191B20;
+      --text-main: #14171C;
+      --text-blue: #1863E5;
+      --text-muted: #6B7280;
+      --text-muted-light: #9CA3AF;
+      --border-soft: #DDD8CB;
+      --border-dark: #191B20;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-pill: 9999px;
+      --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* Top Fixed Bar Controls */
+    .top-action-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: rgba(246, 244, 238, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 1000;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .top-meta-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .top-pill {
+      background: var(--dark-badge);
+      color: #FFF;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-btn {
+      background: var(--bg-white);
+      border: 1px solid var(--border-soft);
+      color: var(--text-main);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .action-btn:hover {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #FFF;
+    }
+
+    /* Presentation Viewport */
+    .deck-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px 70px 24px;
+      width: 100vw;
+    }
+
+    /* 16:9 Widescreen Fixed Canvas Stage */
+    .slide-canvas {
+      width: 100%;
+      max-width: 1180px;
+      aspect-ratio: 16 / 9;
+      background: var(--bg-cream);
+      border-radius: var(--radius-xl);
+      border: 1.5px solid var(--border-soft);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+      animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide-canvas.active {
+      display: flex;
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.995);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ========================================================
+       SLIDE HEADER: REPLIKA TABS FOLDER PERSIS REFERENSI
+       ======================================================== */
+    .slide-header-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 36px 8px 36px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .slide-header-meta .meta-left {
+      color: var(--text-main);
+    }
+
+    .slide-header-meta .meta-center {
+      color: var(--accent-blue);
+    }
+
+    .folder-tab-bar {
+      display: flex;
+      align-items: flex-end;
+      padding: 0 36px;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    .tab-pill {
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid var(--border-soft);
+      border-bottom: none;
+      padding: 7px 16px;
+      border-radius: 10px 10px 0 0;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-pill:hover {
+      background: #FFF;
+      color: var(--text-main);
+    }
+
+    .tab-pill.active {
+      background: var(--accent-blue);
+      color: #FFF;
+      border-color: var(--accent-blue);
+      box-shadow: 0 -2px 10px rgba(24, 99, 229, 0.25);
+    }
+
+    /* Slide Inner Content Body */
+    .slide-content-pad {
+      flex: 1;
+      padding: 24px 44px 32px 44px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Massive Editorial Typography */
+    .display-headline {
+      font-family: var(--font-display);
+      font-size: 44px;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .display-headline.blue-text {
+      color: var(--text-blue);
+    }
+
+    .display-subline {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 720px;
+      line-height: 1.45;
+      margin-bottom: 24px;
+    }
+
+    /* ========================================================
+       SLIDE 1: COVER SLIDE (PERSIS COVER FOTO REFERENSI)
+       ======================================================== */
+    .cover-layout {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding: 36px 48px;
+      justify-content: space-between;
+    }
+
+    .cover-top-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 20;
+    }
+
+    .cover-super-title {
+      font-family: var(--font-display);
+      font-size: 82px;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      color: var(--text-main);
+      line-height: 0.9;
+    }
+
+    .cover-author-block {
+      text-align: right;
+    }
+
+    .cover-author-title {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--text-main);
+      text-transform: uppercase;
+    }
+
+    .cover-author-sub {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* HERO 3D CRYPTEX SILINDER DI TENGAH (MENGGANTIKAN FOLDER) */
+    .cover-center-stage {
+      position: absolute;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 720px;
+      height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    /* Floating Rounded Badges (Sesuai Referensi Foto) */
+    .float-badge {
+      position: absolute;
+      background: var(--dark-badge);
+      color: #FFF;
+      border-radius: var(--radius-lg);
+      padding: 12px 20px;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.22);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 30;
+      transition: transform 0.3s;
+    }
+
+    .float-badge-left {
+      top: 40px;
+      left: 10px;
+      transform: rotate(-6deg);
+    }
+
+    .float-badge-right {
+      bottom: 30px;
+      right: 10px;
+      transform: rotate(5deg);
+      min-width: 220px;
+    }
+
+    .float-badge .badge-tag {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-blue-subtle);
+    }
+
+    .float-badge .badge-sub {
+      font-size: 11px;
+      color: var(--text-muted-light);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-check-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #FFF;
+      margin-top: 2px;
+    }
+
+    .badge-check-icon {
+      color: var(--accent-blue);
+      font-size: 14px;
+    }
+
+    /* Vector 3D Da Vinci Cryptex Cylinder Canvas */
+    .cryptex-cylinder-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 25px 35px rgba(25, 27, 32, 0.25));
+    }
+
+    .cover-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      z-index: 20;
+    }
+
+    .cover-bottom-left-tagline {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      text-transform: uppercase;
+      max-width: 280px;
+      color: var(--text-main);
+    }
+
+    .cover-bottom-right-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    /* ========================================================
+       SLIDE 2: LATAR BELAKANG ("STRATEGY FIRST, CONTENT SECOND")
+       ======================================================== */
+    .strategy-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .approach-pill-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .approach-pill-item {
+      background: var(--bg-cream-dark);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: all 0.2s;
+    }
+
+    .approach-pill-item:hover {
+      background: #FFF;
+      border-color: var(--accent-blue);
+      transform: translateX(4px);
+    }
+
+    .plus-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--dark-badge);
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .approach-pill-text {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .label-bottom-right {
+      margin-top: auto;
+      text-align: right;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    /* ========================================================
+       SLIDE 3: METODE PIPELINE (BLUE FOLDER TAB CONTAINER)
+       ======================================================== */
+    .folder-sheet-container {
+      background: var(--accent-blue);
+      border-radius: var(--radius-lg);
+      padding: 24px 30px;
+      color: #FFF;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      position: relative;
+      box-shadow: 0 14px 30px rgba(24, 99, 229, 0.25);
+    }
+
+    .folder-sheet-top-tab {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .sheet-tab-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: #FFF;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .sheet-tab-btn.active {
+      background: #FFF;
+      color: var(--accent-blue);
+    }
+
+    .folder-grid-2 {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .white-frame-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      color: var(--text-main);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ========================================================
+       SLIDE 4: HASIL & PERTUMBUHAN (RESULT & GROWTH BIG STATS)
+       ======================================================== */
+    .result-growth-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 36px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .stat-circles-cluster {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .circle-stat-card {
+      background: var(--bg-cream-dark);
+      border-radius: 50%;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      transition: all 0.25s;
+    }
+
+    .circle-stat-card:hover {
+      background: #FFF;
+      border-color: var(--accent-blue);
+      transform: translateY(-4px);
+    }
+
+    .circle-stat-card.hero-circle {
+      background: #FFF;
+      border: 2px solid var(--accent-blue);
+      box-shadow: 0 12px 28px rgba(24, 99, 229, 0.15);
+    }
+
+    .circle-stat-num {
+      font-family: var(--font-display);
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1;
+    }
+
+    .circle-stat-card.hero-circle .circle-stat-num {
+      color: var(--accent-blue);
+    }
+
+    .circle-stat-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .key-metrics-pill-box {
+      background: var(--dark-badge);
+      color: #FFF;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-top: 16px;
+    }
+
+    .key-metrics-pill-box .title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .key-metrics-pill-box ul {
+      list-style: none;
+      font-size: 12px;
+      color: var(--text-muted-light);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .key-metrics-pill-box li::before {
+      content: "• ";
+      color: var(--accent-blue);
+      font-weight: bold;
+    }
+
+    /* ========================================================
+       SLIDE 5: CONTOH ENKRIPSI (4 FRAMED PHOTO/DATA CARDS)
+       ======================================================== */
+    .four-cards-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 8px;
+      flex: 1;
+    }
+
+    .framed-step-card {
+      background: #FFF;
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.04);
+      transition: all 0.2s;
+    }
+
+    .framed-step-card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-4px);
+    }
+
+    .card-top-mac-bar {
+      background: var(--bg-cream-dark);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .mac-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #D1D5DB;
+    }
+
+    .framed-card-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .framed-step-num {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      margin-bottom: 4px;
+    }
+
+    .framed-step-title {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .code-stream-box {
+      background: var(--bg-cream);
+      border: 1px solid var(--border-soft);
+      border-radius: 6px;
+      padding: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      word-break: break-all;
+      color: var(--text-main);
+      line-height: 1.4;
+      margin-top: auto;
+    }
+
+    /* ========================================================
+       SLIDE 6: ALUR DEKRIPSI (4 CIRCULAR ICONS WORK PROCESS)
+       ======================================================== */
+    .circular-process-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+
+    .process-circle-card {
+      background: #FFF;
+      border-radius: var(--radius-lg);
+      padding: 24px 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-soft);
+      transition: all 0.2s;
+    }
+
+    .process-circle-card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-4px);
+    }
+
+    .process-icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--accent-blue-subtle);
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+
+    .process-circle-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .process-circle-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* ========================================================
+       SLIDE 7: KESIMPULAN ("WORK WITH ME!" CLOSING STYLE)
+       ======================================================== */
+    .work-with-me-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .closing-card-dark {
+      background: var(--dark-badge);
+      color: #FFF;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+    }
+
+    .contact-item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #FFF;
+    }
+
+    .contact-item-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--accent-blue);
+    }
+
+    /* ========================================================
+       BOTTOM FIXED BAR: COUNTER & NAVIGATION
+       ======================================================== */
+    .bottom-status-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: rgba(246, 244, 238, 0.96);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 1000;
+    }
+
+    .slide-counter-badge {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: var(--text-main);
+    }
+
+    .arrow-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .circle-nav-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #FFF;
+      border: 1px solid var(--border-soft);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: all 0.15s;
+    }
+
+    .circle-nav-btn:hover {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #FFF;
+    }
+
+    /* Print Stylesheet */
+    @media print {
+      body {
+        background: #FFF;
+      }
+      .top-action-bar, .bottom-status-bar {
+        display: none !important;
+      }
+      .deck-container {
+        padding: 0;
+      }
+      .slide-canvas {
+        display: flex !important;
+        page-break-after: always;
+        break-after: page;
+        box-shadow: none;
+        border: none;
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP ACTION BAR -->
+  <header class="top-action-bar">
+    <div class="top-meta-brand">
+      <span class="top-pill">AETHERCRYPT • 2026</span>
+      <span>LAB WORKBENCH • IF21A05 UNSOED</span>
+    </div>
+    <div class="top-controls">
+      <button class="action-btn" onclick="toggleFullscreen()" title="Layar Penuh (F)">
+        <span>⛶ Fullscreen</span>
+      </button>
+      <button class="action-btn" onclick="window.print()" title="Cetak Slide ke PDF">
+        <span>🖨️ Cetak Slide (PDF)</span>
+      </button>
+      <a href="http://localhost:5173" target="_blank" class="action-btn">
+        <span>🚀 Buka Web App</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- PRESENTATION DECK CONTAINER -->
+  <main class="deck-container">
+
+    <!-- ========================================================
+         SLIDE 1: COVER (PERSIS DENGAN HERO SILINDER CRYPTEX PENGGANTI FOLDER)
+         ======================================================== -->
+    <section class="slide-canvas active" id="slide-1">
+      <div class="cover-layout">
+        <!-- Top Row: Big Title & Author -->
+        <div class="cover-top-title-row">
+          <div>
+            <div class="cover-super-title">AetherCrypt</div>
+          </div>
+          <div class="cover-author-block">
+            <div class="cover-author-title">INFORMATIKA UNSOED</div>
+            <div class="cover-author-sub">IF21A05 • Dosen: Eddy Maryanto & Puteri Awaliatush</div>
+          </div>
+        </div>
+
+        <!-- Center Stage: 3D Cryptex Cylinder (Replacing Folder) + Badges -->
+        <div class="cover-center-stage">
+          <!-- Floating Dark Badge Left (Like "2026 Edition" on photo) -->
+          <div class="float-badge float-badge-left">
+            <span class="badge-tag">2026 EDITION</span>
+            <span class="badge-sub">🔒 @lab_kripto_unsoed ✈</span>
+          </div>
+
+          <!-- Floating Dark Badge Right (Like "Content Strategy..." on photo) -->
+          <div class="float-badge float-badge-right">
+            <div class="badge-check-item">
+              <span class="badge-check-icon">✓</span>
+              <span>Playfair Cipher (5×5)</span>
+            </div>
+            <div class="badge-check-item">
+              <span class="badge-check-icon">✓</span>
+              <span>Vigenère Cipher (Mod 26)</span>
+            </div>
+            <div class="badge-check-item">
+              <span class="badge-check-icon">✓</span>
+              <span>Columnar Transposition</span>
+            </div>
+          </div>
+
+          <!-- Realistic 3D Da Vinci Cryptex Cylinder Vector SVG -->
+          <svg class="cryptex-cylinder-svg" viewBox="0 0 650 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="brassCyl" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#FCEECB"/>
+                <stop offset="20%" stop-color="#D4A017"/>
+                <stop offset="50%" stop-color="#FFF8E7"/>
+                <stop offset="80%" stop-color="#A6780C"/>
+                <stop offset="100%" stop-color="#5A3F02"/>
+              </linearGradient>
+              <linearGradient id="bronzeHub" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#A6780C"/>
+                <stop offset="50%" stop-color="#5A3F02"/>
+                <stop offset="100%" stop-color="#261900"/>
+              </linearGradient>
+              <linearGradient id="depthShadow" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#000" stop-opacity="0.35"/>
+                <stop offset="12%" stop-color="#000" stop-opacity="0"/>
+                <stop offset="88%" stop-color="#000" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#000" stop-opacity="0.45"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Main Cylinder Central Axis -->
+            <rect x="50" y="165" width="550" height="30" rx="15" fill="url(#bronzeHub)"/>
+
+            <!-- Left Ornate Brass End Knob -->
+            <path d="M 80 85 C 40 85 40 275 80 275 L 110 255 L 110 105 Z" fill="url(#bronzeHub)" stroke="#3A2803" stroke-width="3"/>
+            <ellipse cx="80" cy="180" rx="14" ry="85" fill="url(#brassCyl)"/>
+            <circle cx="65" cy="180" r="16" fill="#FCEECB" stroke="#3A2803" stroke-width="3"/>
+
+            <!-- Ring 1: P (Playfair) -->
+            <g>
+              <rect x="115" y="100" width="70" height="160" rx="12" fill="url(#brassCyl)" stroke="#3A2803" stroke-width="2"/>
+              <rect x="115" y="100" width="70" height="160" rx="12" fill="url(#depthShadow)"/>
+              <text x="150" y="132" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="15" fill="#4B3304" text-anchor="middle">U</text>
+              <text x="150" y="162" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#14171A" text-anchor="middle">N</text>
+              <text x="150" y="190" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="26" fill="#1863E5" text-anchor="middle">P</text>
+              <text x="150" y="222" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#14171A" text-anchor="middle">I</text>
+              <text x="150" y="248" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="15" fill="#4B3304" text-anchor="middle">V</text>
+              <line x1="115" y1="175" x2="185" y2="175" stroke="#1863E5" stroke-width="2" stroke-dasharray="4,2"/>
+            </g>
+
+            <rect x="187" y="125" width="12" height="110" rx="3" fill="url(#bronzeHub)"/>
+
+            <!-- Ring 2: L (Layer 1) -->
+            <g>
+              <rect x="201" y="100" width="70" height="160" rx="12" fill="url(#brassCyl)" stroke="#3A2803" stroke-width="2"/>
+              <rect x="201" y="100" width="70" height="160" rx="12" fill="url(#depthShadow)"/>
+              <text x="236" y="132" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="15" fill="#4B3304" text-anchor="middle">R</text>
+              <text x="236" y="162" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#14171A" text-anchor="middle">S</text>
+              <text x="236" y="190" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="26" fill="#1863E5" text-anchor="middle">L</text>
+              <text x="236" y="222" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#14171A" text-anchor="middle">T</text>
+              <text x="236" y="248" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="15" fill="#4B3304" text-anchor="middle">A</text>
+              <line x1="201" y1="175" x2="271" y2="175" stroke="#1863E5" stroke-width="2" stroke-dasharray="4,2"/>
+            </g>
+
+            <rect x="273" y="125" width="12" height="110" rx="3" fill="url(#bronzeHub)"/>
+
+            <!-- Ring 3: A (Alignment) -->
+            <g>
+              <rect x="287" y="100" width="70" height="160" rx="12" fill="url(#brassCyl)" stroke="#3A2803" stroke-width="2"/>
+              <rect x="287" y="100" width="70" height="160" rx="12" fill="url(#depthShadow)"/>
+              <text x="322" y="132" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="15" fill="#4B3304" text-anchor="middle">C</text>
+              <text x="322" y="162" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#14171A" text-anchor="middle">D</text>
+              <text x="322" y="190" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="26" fill="#1863E5" text-anchor="middle">A</text>
+              <text x="322" y="222" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#14171A" text-anchor="middle">F</text>
+              <text x="322" y="248" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="15" fill="#4B3304" text-anchor="middle">G</text>
+              <line x1="287" y1="175" x2="357" y2="175" stroke="#1863E5" stroke-width="2" stroke-dasharray="4,2"/>
+            </g>
+
+            <rect x="359" y="125" width="12" height="110" rx="3" fill="url(#bronzeHub)"/>
+
+            <!-- Ring 4: Y (Key) -->
+            <g>
+              <rect x="373" y="100" width="70" height="160" rx="12" fill="url(#brassCyl)" stroke="#3A2803" stroke-width="2"/>
+              <rect x="373" y="100" width="70" height="160" rx="12" fill="url(#depthShadow)"/>
+              <text x="408" y="132" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="15" fill="#4B3304" text-anchor="middle">K</text>
+              <text x="408" y="162" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#14171A" text-anchor="middle">L</text>
+              <text x="408" y="190" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="26" fill="#1863E5" text-anchor="middle">Y</text>
+              <text x="408" y="222" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#14171A" text-anchor="middle">M</text>
+              <text x="408" y="248" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="15" fill="#4B3304" text-anchor="middle">O</text>
+              <line x1="373" y1="175" x2="443" y2="175" stroke="#1863E5" stroke-width="2" stroke-dasharray="4,2"/>
+            </g>
+
+            <rect x="445" y="125" width="12" height="110" rx="3" fill="url(#bronzeHub)"/>
+
+            <!-- Ring 5: ! -->
+            <g>
+              <rect x="459" y="100" width="70" height="160" rx="12" fill="url(#brassCyl)" stroke="#3A2803" stroke-width="2"/>
+              <rect x="459" y="100" width="70" height="160" rx="12" fill="url(#depthShadow)"/>
+              <text x="494" y="132" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="15" fill="#4B3304" text-anchor="middle">Q</text>
+              <text x="494" y="162" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#14171A" text-anchor="middle">W</text>
+              <text x="494" y="190" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="26" fill="#1863E5" text-anchor="middle">3</text>
+              <text x="494" y="222" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#14171A" text-anchor="middle">X</text>
+              <text x="494" y="248" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="15" fill="#4B3304" text-anchor="middle">Z</text>
+              <line x1="459" y1="175" x2="529" y2="175" stroke="#1863E5" stroke-width="2" stroke-dasharray="4,2"/>
+            </g>
+
+            <!-- Right Ornate Brass End Knob -->
+            <path d="M 535 105 L 535 255 L 565 275 C 605 275 605 85 565 85 Z" fill="url(#bronzeHub)" stroke="#3A2803" stroke-width="3"/>
+            <ellipse cx="565" cy="180" rx="14" ry="85" fill="url(#brassCyl)"/>
+            <circle cx="580" cy="180" r="16" fill="#FCEECB" stroke="#3A2803" stroke-width="3"/>
+
+            <!-- Center Lock Alignment Needle -->
+            <polygon points="322,70 314,90 330,90" fill="#1863E5"/>
+            <polygon points="322,290 314,270 330,270" fill="#1863E5"/>
+          </svg>
+        </div>
+
+        <!-- Bottom Row: Stacked Typography Tagline -->
+        <div class="cover-bottom-row">
+          <div class="cover-bottom-left-tagline">
+            SECURE MESSAGING<br>THROUGH CONFUSION<br>AND DIFFUSION
+          </div>
+          <div class="cover-bottom-right-desc">
+            SUPER-ENKRIPSI 3 LAPIS • PURE MATH PYTHON & THREE.JS
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         SLIDE 2: LATAR BELAKANG ("STRATEGY FIRST, CONTENT SECOND")
+         ======================================================== -->
+    <section class="slide-canvas" id="slide-2">
+      <div class="slide-header-meta">
+        <span class="meta-left">AETHERCRYPT CASE FILE</span>
+        <span class="meta-center">01 LATAR BELAKANG & ANALISIS KERENTANAN</span>
+        <span>2026 EDITION</span>
+      </div>
+
+      <div class="slide-content-pad">
+        <div class="strategy-layout">
+          <!-- Left: Big Editorial Headline -->
+          <div>
+            <h2 class="display-headline blue-text">Konfusi dulu,<br>difusi kemudian.</h2>
+            <p class="display-subline" style="margin-top: 16px;">
+              Cipher klasik tunggal selalu meninggalkan jejak pola bahasa alami. Super-enkripsi meruntuhkan korelasi statistik dengan memadukan substitusi poligram dan permutasi geometris secara berantai.
+            </p>
+          </div>
+
+          <!-- Right: 3 Rounded Horizontal Pill Cards (With '+' Icons) -->
+          <div class="approach-pill-list">
+            <div class="approach-pill-item">
+              <div class="plus-badge">+</div>
+              <div class="approach-pill-text">
+                <b>Celah Monoalfabetik:</b> Frekuensi huruf alami bahasa Indonesia sangat timpang — huruf 'A' mencapai 19.33% sehingga mudah ditebak hanya dengan histogram.
+              </div>
+            </div>
+
+            <div class="approach-pill-item">
+              <div class="plus-badge">+</div>
+              <div class="approach-pill-text">
+                <b>Celah Polialfabetik:</b> Vigenère standar rentan terhadap Kasiski Examination dan Friedman Test untuk mengekstrak panjang kunci d dari repetisi kata.
+              </div>
+            </div>
+
+            <div class="approach-pill-item">
+              <div class="plus-badge">+</div>
+              <div class="approach-pill-text">
+                <b>Solusi Shannon AetherCrypt:</b> Gabungan Playfair (5×5) + Vigenère (Mod 26) + Columnar Transposition menghasilkan cipherteks acak datar.
+              </div>
+            </div>
+
+            <div class="label-bottom-right">Urgensi Keamanan</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         SLIDE 3: METODE PIPELINE (BLUE FOLDER TAB CONTAINER)
+         ======================================================== -->
+    <section class="slide-canvas" id="slide-3">
+      <div class="slide-header-meta">
+        <span class="meta-left">AETHERCRYPT CASE FILE</span>
+        <span class="meta-center">02 METODE & KONSEP PIPELINE 3 TAHAP</span>
+        <span>2026 EDITION</span>
+      </div>
+
+      <div class="slide-content-pad">
+        <div class="folder-sheet-container">
+          <div class="folder-sheet-top-tab">
+            <button class="sheet-tab-btn active">01 PLAYFAIR 5×5</button>
+            <button class="sheet-tab-btn">02 VIGENÈRE MOD 26</button>
+            <button class="sheet-tab-btn">03 COLUMNAR GRID</button>
+            <button class="sheet-tab-btn">04 VERIFIKASI UTUH</button>
+          </div>
+
+          <div class="folder-grid-2">
+            <!-- Left: White Frame Card (Like Profile Photo on Reference) -->
+            <div class="white-frame-card">
+              <div style="font-size:11px; font-weight:800; color:var(--accent-blue); letter-spacing:0.05em; text-transform:uppercase; margin-bottom:6px;">
+                Matriks Kunci 5×5
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:4px; font-family:var(--font-mono); font-weight:700; text-align:center; font-size:12px; margin-bottom:10px;">
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">U</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">N</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">I</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">V</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">E</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">R</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">S</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">T</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">A</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">B</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">C</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">D</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">F</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">G</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">H</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">K</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">L</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">M</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">O</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">P</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">Q</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">W</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">X</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">Y</span>
+                <span style="background:#F3F4F6; padding:6px 0; border-radius:4px;">Z</span>
+              </div>
+              <div style="font-size:11px; color:var(--text-muted); line-height:1.4;">
+                Kunci: <b>"UNIVERSITAS"</b> (25 Karakter, huruf J dileburkan ke I).
+              </div>
+            </div>
+
+            <!-- Right: Content & Architecture Description -->
+            <div>
+              <div style="display:inline-block; background:rgba(255,255,255,0.25); padding:4px 12px; border-radius:var(--radius-pill); font-size:11px; font-weight:800; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:10px;">
+                Arsitektur Berantai Simetris
+              </div>
+              <h3 style="font-family:var(--font-display); font-size:28px; font-weight:900; line-height:1.15; margin-bottom:12px;">
+                Transformasi 3 Tahap Non-Linear.
+              </h3>
+              <p style="font-size:13.5px; line-height:1.55; color:rgba(255,255,255,0.9); margin-bottom:16px;">
+                1. <b>Playfair 5×5:</b> Memecah plainteks menjadi pasangan bigram, meniadakan analisis frekuensi 1-ke-1.<br>
+                2. <b>Vigenère Mod 26:</b> Melakukan pergeseran aritmatika berkala <i>Cᵢ = (Pᵢ + Kᵢ) mod 26</i> untuk menyamarkan pola bigram.<br>
+                3. <b>Columnar Transposition:</b> Menyusun karakter ke dalam kisi geometris baris dan membacanya menurun berdasarkan ranking leksikografis kunci.
+              </p>
+              <div style="display:flex; gap:12px; font-size:12px; font-weight:700;">
+                <span style="background:rgba(0,0,0,0.2); padding:6px 12px; border-radius:6px;">⚡ Pure Math Engine</span>
+                <span style="background:rgba(0,0,0,0.2); padding:6px 12px; border-radius:6px;">🔐 3 Kunci Mandiri</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         SLIDE 4: HASIL & EVALUASI ("RESULT & GROWTH" BIG STATS)
+         ======================================================== -->
+    <section class="slide-canvas" id="slide-4">
+      <div class="slide-header-meta">
+        <span class="meta-left">AETHERCRYPT CASE FILE</span>
+        <span class="meta-center">03 KRIPTANALISIS & EVALUASI FORENSIK</span>
+        <span>2026 EDITION</span>
+      </div>
+
+      <div class="slide-content-pad">
+        <div class="result-growth-layout">
+          <!-- Left: Big Title + Dark Key Metrics Card -->
+          <div>
+            <h2 class="display-headline blue-text" style="font-size: 52px;">Hasil &<br>Evaluasi.</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.45;">
+              Pengujian empiris membuktikan bahwa super-enkripsi secara efektif meratakan distribusi statistik dan menghapus sidik jari bahasa.
+            </p>
+
+            <div class="key-metrics-pill-box">
+              <div class="title">
+                <span>Metrik Forensik Kunci</span>
+                <span style="color:#10B981;">✓ VALID</span>
+              </div>
+              <ul>
+                <li>Mendekati nilai acak murni teoritis (IC: 0.0385)</li>
+                <li>Peningkatan Entropi Informasi Shannon mendekati batas atas</li>
+                <li>Verifikasi reversibilitas 100% identik tanpa data hilang</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Right: 3 Big Circular Stats Cluster (Exactly as in Reference Photo) -->
+          <div class="stat-circles-cluster">
+            <!-- Circle 1: IC Drop -->
+            <div class="circle-stat-card hero-circle">
+              <div class="circle-stat-num">0.0359</div>
+              <div class="circle-stat-label">Index of Coincidence<br><span style="color:var(--text-muted); font-size:10px;">(Normal: 0.0720)</span></div>
+            </div>
+
+            <!-- Circle 2: Entropy -->
+            <div class="circle-stat-card">
+              <div class="circle-stat-num">4.231</div>
+              <div class="circle-stat-label">Entropi Shannon<br><span style="color:var(--text-muted); font-size:10px;">(Maks: 4.700 Bit)</span></div>
+            </div>
+
+            <!-- Circle 3: Reversibility -->
+            <div class="circle-stat-card" style="grid-column: span 2; aspect-ratio: auto; border-radius: var(--radius-md); padding: 18px;">
+              <div style="display:flex; align-items:center; justify-content:space-around; width:100%;">
+                <div>
+                  <div class="circle-stat-num" style="font-size:32px; color:#10B981;">100%</div>
+                  <div class="circle-stat-label">Akurasi Dekripsi</div>
+                </div>
+                <div style="border-left:1px solid var(--border-soft); height:40px;"></div>
+                <div>
+                  <div class="circle-stat-num" style="font-size:32px; color:var(--text-blue);">&lt; 15ms</div>
+                  <div class="circle-stat-label">Latensi Komputasi</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         SLIDE 5: CONTOH ENKRIPSI (4 FRAMED CARDS - PERSIS REFERENSI)
+         ======================================================== -->
+    <section class="slide-canvas" id="slide-5">
+      <div class="slide-header-meta">
+        <span class="meta-left">AETHERCRYPT CASE FILE</span>
+        <span class="meta-center">04 CONTOH NYATA: PROSES ENKRIPSI STEP-BY-STEP</span>
+        <span>2026 EDITION</span>
+      </div>
+
+      <div class="slide-content-pad">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:12px;">
+          <div>
+            <h3 style="font-family:var(--font-display); font-size:24px; font-weight:900;">Demonstrasi Kasus Uji Aktual</h3>
+            <p style="font-size:12px; color:var(--text-muted);">Data masukan riil dari antarmuka web AetherCrypt.</p>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:11px; background:#FFF; border:1px solid var(--border-soft); padding:4px 10px; border-radius:6px;">
+            Input: "TEMUI SAYA DI LABORATORIUM KRIPTOGRAFI MALAM INI"
+          </div>
+        </div>
+
+        <!-- 4 Framed Photo-Style Step Cards (Matching the 4 photos in Reference) -->
+        <div class="four-cards-row">
+          <!-- Card 1: Input -->
+          <div class="framed-step-card">
+            <div class="card-top-mac-bar">
+              <span class="mac-dot" style="background:#FF5F56;"></span>
+              <span class="mac-dot" style="background:#FFBD2E;"></span>
+              <span class="mac-dot" style="background:#27C93F;"></span>
+            </div>
+            <div class="framed-card-body">
+              <span class="framed-step-num">TAHAP 00</span>
+              <div class="framed-step-title">Normalisasi Plainteks</div>
+              <p style="font-size:11px; color:var(--text-muted); line-height:1.4;">
+                Pembersihan spasi dan simbol. Dibentuk 21 pasangan bigram untuk persiapan matriks 5×5.
+              </p>
+              <div class="code-stream-box">
+                TEMUISAYADILABORATORIUMKRIPTOGRAFIMALAMINI
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Playfair -->
+          <div class="framed-step-card">
+            <div class="card-top-mac-bar">
+              <span class="mac-dot"></span><span class="mac-dot"></span><span class="mac-dot"></span>
+            </div>
+            <div class="framed-card-body">
+              <span class="framed-step-num">TAHAP 01</span>
+              <div class="framed-step-title">Playfair 5×5</div>
+              <p style="font-size:11px; color:var(--text-muted); line-height:1.4;">
+                Kunci: <b>"UNIVERSITAS"</b>. Substitusi geometris baris, kolom, dan sudut persegi.
+              </p>
+              <div class="code-stream-box" style="color:var(--accent-blue); font-weight:bold;">
+                TWOLVKSVFYBQEZBMBNCOZQWCFUZTMSVJDFOGGGBWQM
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Vigenère -->
+          <div class="framed-step-card">
+            <div class="card-top-mac-bar">
+              <span class="mac-dot"></span><span class="mac-dot"></span><span class="mac-dot"></span>
+            </div>
+            <div class="framed-card-body">
+              <span class="framed-step-num">TAHAP 02</span>
+              <div class="framed-step-title">Vigenère Mod 26</div>
+              <p style="font-size:11px; color:var(--text-muted); line-height:1.4;">
+                Kunci: <b>"SOEDIRMAN"</b>. Pergeseran numerik periodik C = (P + K) mod 26.
+              </p>
+              <div class="code-stream-box" style="color:var(--accent-blue); font-weight:bold;">
+                TWOLVKSVFYBQEZBMBNCOZQWCFUZTMSVJDFOGGGBWQMXX
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Columnar -->
+          <div class="framed-step-card" style="border-color:var(--accent-blue);">
+            <div class="card-top-mac-bar" style="background:var(--accent-blue-subtle);">
+              <span class="mac-dot" style="background:var(--accent-blue);"></span><span class="mac-dot"></span><span class="mac-dot"></span>
+            </div>
+            <div class="framed-card-body">
+              <span class="framed-step-num">TAHAP 03 FINAL</span>
+              <div class="framed-step-title">Columnar Transposition</div>
+              <p style="font-size:11px; color:var(--text-muted); line-height:1.4;">
+                Kunci: <b>"INFORMATIKA"</b>. Kisi 4×11 dibaca urut ranking alfabetik kunci.
+              </p>
+              <div class="code-stream-box" style="background:var(--dark-badge); color:#FFF; font-weight:bold;">
+                SNMWBQDXOZFGTQWFFOVMYZJXKBTBWECOLBUGVMZGVCSQ
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         SLIDE 6: ALUR DEKRIPSI (4 CIRCULAR ICONS WORK PROCESS)
+         ======================================================== -->
+    <section class="slide-canvas" id="slide-6">
+      <div class="slide-header-meta">
+        <span class="meta-left">AETHERCRYPT CASE FILE</span>
+        <span class="meta-center">05 ALUR DEKRIPSI INVERS & PEMBUKTIAN REVERSIBILITAS</span>
+        <span>2026 EDITION</span>
+      </div>
+
+      <div class="slide-content-pad">
+        <div style="margin-bottom: 20px;">
+          <h2 class="display-headline" style="font-size: 34px;">Alur Kerja Dekripsi Invers</h2>
+          <p class="display-subline" style="margin-bottom: 0;">
+            Rekonstruksi mundur dilakukan tepat secara berlawanan untuk membuktikan kebenaran matematis bolak-balik tanpa cacat.
+          </p>
+        </div>
+
+        <!-- 4 Circular Icon Steps (Inspired by "Research, Planning, Execution, Optimization") -->
+        <div class="circular-process-row">
+          <!-- Step 1 -->
+          <div class="process-circle-card">
+            <div class="process-icon-circle">☷</div>
+            <div class="process-circle-title">1. Invers Columnar</div>
+            <p class="process-circle-desc">
+              Menyusun ciphertext final kembali ke kisi 4×11 mengikuti ranking alfabetis kunci 'INFORMATIKA'.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="process-circle-card">
+            <div class="process-icon-circle">⟲</div>
+            <div class="process-circle-title">2. Invers Vigenère</div>
+            <p class="process-circle-desc">
+              Menerapkan pengurangan aljabar P = (C - K + 26) mod 26 dengan kunci 'SOEDIRMAN'.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="process-circle-card">
+            <div class="process-icon-circle">⊞</div>
+            <div class="process-circle-title">3. Invers Playfair</div>
+            <p class="process-circle-desc">
+              Pembalikan aturan geser kiri, atas, dan penukaran sudut pada matriks 5×5 'UNIVERSITAS'.
+            </p>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="process-circle-card" style="border-color:#10B981;">
+            <div class="process-icon-circle" style="background:#ECFDF5; color:#10B981;">✓</div>
+            <div class="process-circle-title">4. Verifikasi Utuh</div>
+            <p class="process-circle-desc">
+              Pesan awal pulih 100% identik tanpa kehilangan informasi semantik apapun.
+            </p>
+          </div>
+        </div>
+
+        <!-- Verification Banner Bottom -->
+        <div style="background:#FFF; border:1px solid var(--border-soft); border-radius:var(--radius-md); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+          <div style="font-size:12px; font-weight:700;">
+            <span style="color:var(--text-muted);">Plainteks Terpulihkan:</span>
+            <span style="font-family:var(--font-mono); color:var(--accent-blue); margin-left:8px;">TEMUISAYADILABORATORIUMKRIPTOGRAFIMALAMINIMW</span>
+          </div>
+          <span style="background:#10B981; color:#FFF; font-size:11px; font-weight:800; padding:4px 10px; border-radius:var(--radius-pill);">
+            ✓ STATUS: 100% IDENTIK
+          </span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         SLIDE 7: KESIMPULAN ("WORK WITH ME!" CLOSING STYLE)
+         ======================================================== -->
+    <section class="slide-canvas" id="slide-7">
+      <div class="slide-header-meta">
+        <span class="meta-left">AETHERCRYPT CASE FILE</span>
+        <span class="meta-center">06 KESIMPULAN & PENUTUP</span>
+        <span>2026 EDITION</span>
+      </div>
+
+      <div class="slide-content-pad">
+        <div class="work-with-me-layout">
+          <!-- Left: Giant Closing Headline (Styled like "Work with Me!") -->
+          <div>
+            <h2 class="display-headline blue-text" style="font-size: 64px; line-height: 0.95;">
+              Aether-<br>Crypt!
+            </h2>
+            <p style="font-size: 14px; color: var(--text-muted); margin-top: 16px; line-height: 1.5; max-width: 440px;">
+              Sistem Super-Enkripsi 3 Lapis membuktikan integrasi harmonis antara kekuatan konfusi-difusi klasik dengan transparansi edukasi modern Three.js.
+            </p>
+          </div>
+
+          <!-- Right: Dark Closing Card (Styled like "Contact Me!" card on Reference) -->
+          <div class="closing-card-dark">
+            <div style="font-size:11px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent-blue-subtle);">
+              INFORMASI KULIAH & TIM:
+            </div>
+
+            <div class="contact-item-row">
+              <div class="contact-item-icon">🏛️</div>
+              <div>
+                <div style="font-size:11px; color:var(--text-muted-light);">Program Studi</div>
+                <div>Teknik Informatika, FT Unsoed</div>
+              </div>
+            </div>
+
+            <div class="contact-item-row">
+              <div class="contact-item-icon">👨‍🏫</div>
+              <div>
+                <div style="font-size:11px; color:var(--text-muted-light);">Dosen Pengampu</div>
+                <div>Eddy Maryanto, M.Kom</div>
+                <div>Puteri Awaliatush Shofro, M.Kom</div>
+              </div>
+            </div>
+
+            <div class="contact-item-row">
+              <div class="contact-item-icon">⚙️</div>
+              <div>
+                <div style="font-size:11px; color:var(--text-muted-light);">Status Implementasi</div>
+                <div style="color:#10B981;">Siap Uji & Terverifikasi</div>
+              </div>
+            </div>
+
+            <div style="margin-top:8px; border-top:1px solid rgba(255,255,255,0.15); padding-top:12px; font-size:12px; font-weight:bold; text-align:center; color:var(--accent-blue-subtle);">
+              TERIMA KASIH • SESI TANYA JAWAB
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM STATUS & NAVIGATION BAR -->
+  <footer class="bottom-status-bar">
+    <div class="slide-counter-badge" id="slide-counter">
+      SLIDE 01 / 07
+    </div>
+
+    <div style="font-size: 11px; color: var(--text-muted);">
+      Gunakan Panah <kbd style="background:#FFF; padding:2px 6px; border:1px solid #DDD; border-radius:4px;">◀</kbd> <kbd style="background:#FFF; padding:2px 6px; border:1px solid #DDD; border-radius:4px;">▶</kbd> atau <kbd style="background:#FFF; padding:2px 6px; border:1px solid #DDD; border-radius:4px;">Spasi</kbd> • Tekan <kbd style="background:#FFF; padding:2px 6px; border:1px solid #DDD; border-radius:4px;">F</kbd> untuk Layar Penuh
+    </div>
+
+    <div class="arrow-nav-group">
+      <button class="circle-nav-btn" onclick="prevSlide()" title="Slide Sebelumnya (Panah Kiri)">◀</button>
+      <button class="circle-nav-btn" onclick="nextSlide()" title="Slide Selanjutnya (Panah Kanan)">▶</button>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT CONTROLLER -->
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+
+    function updateSlide() {
+      // Toggle active slide canvas
+      document.querySelectorAll('.slide-canvas').forEach((slide, idx) => {
+        if (idx + 1 === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      // Update counter
+      document.getElementById('slide-counter').textContent = 
+        `SLIDE ${String(currentSlide).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+    }
+
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+      } else {
+        currentSlide = 1; // loop
+      }
+      updateSlide();
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+      } else {
+        currentSlide = totalSlides;
+      }
+      updateSlide();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          alert(`Error fullscreen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        goToSlide(1);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        goToSlide(totalSlides);
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key >= '1' && e.key <= '7') {
+        goToSlide(parseInt(e.key));
+      }
+    });
+
+    // Touch Swipe Support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+    document.addEventListener('touchend', e => {
+      let touchEndX = e.changedTouches[0].screenX;
+      if (touchEndX < touchStartX - 50) nextSlide();
+      if (touchEndX > touchStartX + 50) prevSlide();
+    }, false);
+  </script>
+</body>
+</html>

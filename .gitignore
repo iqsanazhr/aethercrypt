@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+vendor/
+
+# Build artifacts
+dist/
+frontend/dist/
+build/
+.vercel/
+
+# Python cache & virtual environments
+__pycache__/
+backend/__pycache__/
+backend/core/__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.venv/
+env/
+venv/
+.pytest_cache/
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+
+# Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & temp
+*.log
+*.tmp
+*.bak
+*.swp
